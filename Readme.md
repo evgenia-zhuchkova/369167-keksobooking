@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Евгения Жучкова](https://up.htmlacademy.ru/javascript/13/user/369167).
-* Наставник: `Неизвестно`.
+* Наставник: Андрей Рыжаков (https://up.htmlacademy.ru/javascript/13/user/201015).
 
 ---
 
