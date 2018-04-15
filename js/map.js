@@ -19,7 +19,7 @@ var MIN_GUESTS = 1;
 var MAX_GUESTS = 15;
 var TIMES_CHECK = ['12-00', '13-00', '14-00'];
 var FEATURES = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'];
-var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg' ];
+var PHOTOS = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 var MIN_X = 300;
 var MAX_X = 900;
 var MIN_Y = 150;
@@ -44,7 +44,7 @@ var getRandomInteger = function (min, max) {
 };
 
 /* Перемешивает массив */
-var getShuffle = function(arr, startIndex) {
+var getShuffle = function (arr, startIndex) {
   for (var i = 0; i < startIndex; i++) {
     var currentIndex = getRandomInteger(0, i);
     var interimIndex = arr[currentIndex];
@@ -54,16 +54,9 @@ var getShuffle = function(arr, startIndex) {
   return interimIndex;
 };
 
-/* Случайная опция 
-var getFeatures = function() {
-  var features = [];
-  var length = getRandomInteger(0, FEATURES.length);
-  for (var i = 0; i < length; i++) {
-    features.push(getShuffle(FEATURES, i));
-  }
-  return features;
-};*/
-
+//* Случайная опция 
+//var getFeatures = function() { var features = []; var length = getRandomInteger(0, FEATURES.length); for (var i = 0; i < length; i++) { features.push(getShuffle(FEATURES, i));}
+//return features; };
 
 /* Массив с  данными */
 var createOffer = function (index) {
@@ -102,7 +95,7 @@ for (var i=0; i < offerCount; i++) {
 
 /* Отрисовывает метку на карте, создает DOM элементы и заполняет их данными из массива */
 
-var createPin = function(data) {
+var createPin = function (data) {
   var template = pinTemplate.cloneNode(true);
   template.style.left = (data.location.x + PIN_WIDTH) / 2 + 'px';
   template.style.left = data.location.y + PIN_HEIGHT + 'px';
@@ -111,10 +104,10 @@ var createPin = function(data) {
   return template;
 };
 
-
 for (var j=0; j < offerings.length; j++) {
   fragment.appendChild(createPin(offerings[j]));
 }
+
 pins.appendChild(fragment);
 
 /* Создает DOM - элемент с тегом, именем класса, текстом */
