@@ -54,9 +54,9 @@ var getShuffle = function (arr, startIndex) {
   return interimIndex;
 };
 
-//* Случайная опция 
-//var getFeatures = function() { var features = []; var length = getRandomInteger(0, FEATURES.length); for (var i = 0; i < length; i++) { features.push(getShuffle(FEATURES, i));}
-//return features; };
+// Случайная опция 
+// var getFeatures = function() { var features = []; var length = getRandomInteger(0, FEATURES.length); for (var i = 0; i < length; i++) { features.push(getShuffle(FEATURES, i));}
+// return features; };
 
 /* Массив с  данными */
 var createOffer = function (index) {
@@ -71,7 +71,7 @@ var createOffer = function (index) {
       title: TITLES[index],
       address: x + ', ' + y,
       price: getRandomInteger(MIN_PRICE, MAX_PRICE),
-      type:  getShuffle(TYPES, TYPES.length),
+      type: getShuffle(TYPES, TYPES.length),
       rooms: getRandomInteger(MIN_ROOMS, MAX_ROOMS),
       guests: getRandomInteger(MIN_GUESTS, MAX_GUESTS),
       checkin: time,
@@ -89,7 +89,7 @@ var createOffer = function (index) {
 };
 
 var offerings = [];
-for (var i=0; i < offerCount; i++) {
+for (var i = 0; i < offerCount; i++) {
   offerings[i] = createOffer(i);
 }
 
@@ -104,7 +104,7 @@ var createPin = function (data) {
   return template;
 };
 
-for (var j=0; j < offerings.length; j++) {
+for (var j = 0; j < offerings.length; j++) {
   fragment.appendChild(createPin(offerings[j]));
 }
 
@@ -159,4 +159,4 @@ var createCard = function (data) {
 
   return newCard;
 };
-  mapElements.insertBefore(createCard(offerings[0]), mapFiltersContainer);
+mapElements.insertBefore(createCard(offerings[0]), mapFiltersContainer);
