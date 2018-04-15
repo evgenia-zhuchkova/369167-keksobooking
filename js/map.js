@@ -54,10 +54,6 @@ var getShuffle = function (arr, startIndex) {
   return interimIndex;
 };
 
-// Случайная опция 
-// var getFeatures = function() { var features = []; var length = getRandomInteger(0, FEATURES.length); for (var i = 0; i < length; i++) { features.push(getShuffle(FEATURES, i));}
-// return features; };
-
 /* Массив с  данными */
 var createOffer = function (index) {
   var x = getRandomInteger(MIN_X, MAX_X);
