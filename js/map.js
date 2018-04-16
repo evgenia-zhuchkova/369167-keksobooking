@@ -147,7 +147,7 @@ var createCard = function (data) {
   });
   newCard.querySelector('.popup__description').textContent = data.offer.description;
   newCard.querySelector('.popup__photos').innerHTML = '';
-  data.offer.photos.forEach(function(item) {
+  data.offer.photos.forEach(function (item) {
     var popupPhoto = createNewElement('img', 'popup__photo');
     popupPhoto.src = item;
     popupPhoto.width = 45;
