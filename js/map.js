@@ -25,12 +25,13 @@ var MAX_X = 900;
 var MIN_Y = 150;
 var MAX_Y = 500;
 var offerCount = 8;
-var PIN_WIDTH = 60;
-var PIN_HEIGHT = 80;
+var PIN_WIDTH = 50;
+var PIN_HEIGHT = 70;
 var pins = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 var fragment = document.createDocumentFragment();
 var mapFiltersContainer = document.querySelector('.map__filters-container');
+var cardTemplate = document.querySelector('template').content.querySelector('.popup');
 
 /* Убирает класс map--faded */
 var mapElements = document.querySelector('.map');
@@ -38,28 +39,34 @@ mapElements.classList.remove('map--faded');
 
 /* Случайное целое число в интервале от min до max, включая min и max */
 var getRandomInteger = function (min, max) {
-  var constRound = 0.5;
-  var rand = min - constRound + Math.random() * (max - min + 2 * constRound);
+  var rand = min - 0.5 + Math.random() * (max - min + 1);
   rand = Math.round(rand);
   return rand;
 };
 
-/* Перемешивает массив */
-var getShuffle = function (arr, startIndex) {
-  for (var i = 0; i < startIndex; i++) {
-    var currentIndex = getRandomInteger(0, i);
-    var interimIndex = arr[currentIndex];
-    arr[currentIndex] = arr[i];
-    arr[i] = interimIndex;
-  }
+/* Получает случайный элемент массива */
+var getShuffle = function (elements, startIndex) {
+  var index = getRandomInteger(startIndex, elements.length - 1);
+  var interimIndex = elements[index];
+  elements[index] = elements[startIndex];
+  elements[startIndex] = interimIndex;
   return interimIndex;
+};
+
+/* Получает случайный массив */
+var getRandomArr = function (endItems, count) {
+  var resultElements = [];
+  for (var k = 0; k < count; k++) {
+    resultElements.push(getShuffle(endItems, k));
+  }
+  return resultElements;
 };
 
 /* Массив с  данными */
 var createOffer = function (index) {
   var x = getRandomInteger(MIN_X, MAX_X);
   var y = getRandomInteger(MIN_Y, MAX_Y);
-  var time = getShuffle(TIMES_CHECK, TIMES_CHECK.length);
+  var time = getShuffle(TIMES_CHECK, 0);
   var data = {
     author: {
       avatar: 'img/avatars/user0' + (index + 1) + '.png'
@@ -68,14 +75,14 @@ var createOffer = function (index) {
       title: TITLES[index],
       address: x + ', ' + y,
       price: getRandomInteger(MIN_PRICE, MAX_PRICE),
-      type: getShuffle(TYPES, TYPES.length),
+      type: getShuffle(TYPES, 0),
       rooms: getRandomInteger(MIN_ROOMS, MAX_ROOMS),
       guests: getRandomInteger(MIN_GUESTS, MAX_GUESTS),
       checkin: time,
       checkout: time,
-      features: FEATURES.slice(getRandomInteger(0, FEATURES.length - 1)),
+      features: getRandomArr(FEATURES, getRandomInteger(1, FEATURES.length)),
       description: '',
-      photos: PHOTOS.sort()
+      photos: getRandomArr(PHOTOS, PHOTOS.length)
     },
     location: {
       x: x,
@@ -84,7 +91,6 @@ var createOffer = function (index) {
   };
   return data;
 };
-
 
 var renderOffers = function (offers) {
   var offerings = [];
@@ -98,8 +104,8 @@ var renderOffers = function (offers) {
 
 var createPin = function (data) {
   var template = pinTemplate.cloneNode(true);
-  template.style.left = (data.location.x + PIN_WIDTH) / 2 + 'px';
-  template.style.left = data.location.y + PIN_HEIGHT + 'px';
+  template.style.left = data.location.x - PIN_WIDTH / 2 + 'px';
+  template.style.top = data.location.y + PIN_HEIGHT + 'px';
   template.children[0].src = data.author.avatar;
   template.children[0].alt = data.offer.title;
   return template;
@@ -126,7 +132,6 @@ var createNewElement = function (tagName, className, text) {
 /* Создает DOM - элемент обьявления с данными */
 
 var createCard = function (data) {
-  var cardTemplate = document.querySelector('template').content.querySelector('.popup');
   var newCard = cardTemplate.cloneNode(true);
   newCard.querySelector('.popup__title').textContent = data.offer.title;
   newCard.querySelector('.popup__text--address').textContent = data.offer.address;
@@ -141,15 +146,14 @@ var createCard = function (data) {
     newCard.querySelector('.popup__features').appendChild(popupFeature);
   });
   newCard.querySelector('.popup__description').textContent = data.offer.description;
-  var drawPhotos = function (photo) {
-    var popupPhoto = createNewElement('img', 'popup__photo');
-    popupPhoto.src = photo;
-    popupPhoto.width = 50;
-    popupPhoto.height = 45;
-    newCard.querySelector('.popup__photos').appendChild(popupPhoto);
-  };
   newCard.querySelector('.popup__photos').innerHTML = '';
-  data.offer.photos.forEach(drawPhotos);
+  data.offer.photos.forEach(function(item) {
+    var popupPhoto = createNewElement('img', 'popup__photo');
+    popupPhoto.src = item;
+    popupPhoto.width = 45;
+    popupPhoto.height = 40;
+    newCard.querySelector('.popup__photos').appendChild(popupPhoto);
+  });
   return newCard;
 };
 mapElements.insertBefore(createCard(renderOffers(offerCount)[0]), mapFiltersContainer);
