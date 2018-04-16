@@ -112,7 +112,7 @@ var renderPins = function (parametrs) {
   }
   pins.appendChild(fragment);
 };
- 
+
 renderPins(renderOffers(offerCount));
 
 /* Создает DOM - элемент с тегом, именем класса, текстом */
