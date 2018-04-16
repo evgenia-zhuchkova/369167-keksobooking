@@ -86,10 +86,10 @@ var createOffer = function (index) {
 };
 
 
-function renderOffers (offers) {
-var offerings = [];
-for (var i = 0; i < offers; i++) {
-  offerings[i] = createOffer(i);
+var renderOffers = function (offers) {
+  var offerings = [];
+  for (var i = 0; i < offers; i++) {
+    offerings[i] = createOffer(i);
   }
   return offerings;
 }
@@ -105,7 +105,7 @@ var createPin = function (data) {
   return template;
 };
 
-function renderPins (parametrs) {
+var renderPins = function (parametrs) {
   var lengthArr = parametrs.length;
   for (var j = 0; j < lengthArr; j++) {
     fragment.appendChild(createPin(parametrs[j]));
@@ -147,7 +147,7 @@ var createCard = function (data) {
     popupPhoto.width = 50;
     popupPhoto.height = 45;
     newCard.querySelector('.popup__photos').appendChild(popupPhoto);
-   };
+  };
   newCard.querySelector('.popup__photos').innerHTML = '';
   data.offer.photos.forEach(drawPhotos);
   return newCard;
