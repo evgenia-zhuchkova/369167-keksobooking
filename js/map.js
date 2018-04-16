@@ -92,7 +92,7 @@ var renderOffers = function (offers) {
     offerings[i] = createOffer(i);
   }
   return offerings;
-}
+};
 
 /* Отрисовывает метку на карте, создает DOM элементы и заполняет их данными из массива */
 
@@ -111,7 +111,7 @@ var renderPins = function (parametrs) {
     fragment.appendChild(createPin(parametrs[j]));
   }
   pins.appendChild(fragment);
-}
+};
  
 renderPins(renderOffers(offerCount));
 
