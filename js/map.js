@@ -67,8 +67,8 @@ var reNewAddress = function () {
 var activatePage = function (activePosition) {
   if (activePosition) {
     mapElements.classList.remove('map--faded');
-    activeForm.classList.remove('ad-form--disabled'); }
-  else {
+    activeForm.classList.remove('ad-form--disabled');
+  } else {
     mapElements.classList.add('map--faded');
     activeForm.classList.add('ad-form--disabled');
   }
