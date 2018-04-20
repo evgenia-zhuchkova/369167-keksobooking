@@ -27,15 +27,54 @@ var MAX_Y = 500;
 var offerCount = 8;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
+var PIN_ARROW_HEIGHT = 22;
 var pins = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
-var fragment = document.createDocumentFragment();
-var mapFiltersContainer = document.querySelector('.map__filters-container');
 var cardTemplate = document.querySelector('template').content.querySelector('.popup');
-
-/* Убирает класс map--faded */
+var newCard = cardTemplate.cloneNode(true);
 var mapElements = document.querySelector('.map');
-mapElements.classList.remove('map--faded');
+var activeForm = document.querySelector('.ad-form');
+var fieldsets = document.querySelectorAll('fieldset');
+var mapPinMain = document.querySelector('.map__pin--main');
+var address = document.querySelector('#address');
+var mapPinMainWidth = mapPinMain.querySelector('img').width;
+var mapPinMainHeight = mapPinMain.querySelector('img').height;
+var mapPinMainCenterX = parseInt(mapPinMain.style.left, 10);
+var mapPinMainCenterY = parseInt(mapPinMain.style.top, 10);
+var ESC_KEYCODE = 27;
+var activePin = null;
+var currentOffer = null;
+
+/* Блокировка полей */
+var disableFieldsets = function (flag) {
+  for (var i = 0; i < fieldsets.length; i++) {
+    fieldsets[i].disabled = flag;
+  }
+};
+
+/* Определяет начальный адрес */
+var setAddress = function () {
+  address.value = (mapPinMainCenterX - mapPinMainWidth / 2) + ', ' + (mapPinMainCenterY - mapPinMainHeight / 2);
+  address.readOnly = true;
+};
+
+/* Обновление координат адреса */
+var reNewAddress = function () {
+  address.value = (mapPinMainCenterX + mapPinMainWidth / 2) + ', ' + (mapPinMainCenterY + mapPinMainHeight / 2 + PIN_ARROW_HEIGHT);
+};
+
+/* Активация страницы */
+var activatePage = function (activePosition) {
+  if (activePosition) {
+    mapElements.classList.remove('map--faded');
+    activeForm.classList.remove('ad-form--disabled');
+  } else {
+    mapElements.classList.add('map--faded');
+    activeForm.classList.add('ad-form--disabled');
+  }
+  setAddress();
+  disableFieldsets(!activePosition);
+};
 
 /* Случайное целое число в интервале от min до max, включая min и max */
 var getRandomInteger = function (min, max) {
@@ -111,15 +150,24 @@ var createPin = function (data) {
   return template;
 };
 
-var renderPins = function (parametrs) {
-  var lengthArr = parametrs.length;
-  for (var j = 0; j < lengthArr; j++) {
-    fragment.appendChild(createPin(parametrs[j]));
-  }
+var renderPins = function (data) {
+  var fragment = document.createDocumentFragment();
+  data.forEach(function (item) {
+    var pin = createPin(item);
+    fragment.appendChild(pin);
+    pin.addEventListener('click', function (event) {
+      event.preventDefault();
+      activePin = event.target.closest('.map__pin');
+      if (currentOffer) {
+        currentOffer.remove();
+      }
+      currentOffer = createCard(item);
+      currentOffer.querySelector('.popup__close').addEventListener('click', closePopUpHandler);
+      pins.insertAdjacentElement('afterend', currentOffer);
+    });
+  });
   pins.appendChild(fragment);
 };
-
-renderPins(renderOffers(offerCount));
 
 /* Создает DOM - элемент с тегом, именем класса, текстом */
 var createNewElement = function (tagName, className, text) {
@@ -132,7 +180,7 @@ var createNewElement = function (tagName, className, text) {
 /* Создает DOM - элемент обьявления с данными */
 
 var createCard = function (data) {
-  var newCard = cardTemplate.cloneNode(true);
+  newCard.querySelector('.popup__avatar').src = data.author.avatar;
   newCard.querySelector('.popup__title').textContent = data.offer.title;
   newCard.querySelector('.popup__text--address').textContent = data.offer.address;
   newCard.querySelector('.popup__text--price').textContent = data.offer.price + '₽/ночь';
@@ -156,4 +204,33 @@ var createCard = function (data) {
   });
   return newCard;
 };
-mapElements.insertBefore(createCard(renderOffers(offerCount)[0]), mapFiltersContainer);
+
+/* Переводит страницу в активное состояние и устанавливает значения поля ввода адреса */
+var activePageHandler = function () {
+  activatePage(true);
+  renderPins(renderOffers(offerCount));
+  reNewAddress();
+  mapPinMain.removeEventListener('mouseup', activePageHandler);
+};
+
+mapPinMain.addEventListener('mouseup', activePageHandler);
+
+var closePopUpHandler = function (evt) {
+  evt.preventDefault();
+  closeOffer();
+};
+
+var closeOffer = function () {
+  if (currentOffer) {
+    currentOffer.remove();
+    activePin.blur();
+    currentOffer.querySelector('.popup__close').removeEventListener('click', closePopUpHandler);
+  }
+};
+
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    evt.preventDefault();
+    closeOffer();
+  }
+});
