@@ -67,8 +67,7 @@ var reNewAddress = function () {
 var activatePage = function (activePosition) {
   if (activePosition) {
     mapElements.classList.remove('map--faded');
-    activeForm.classList.remove('ad-form--disabled');
-  }
+    activeForm.classList.remove('ad-form--disabled'); }
   else {
     mapElements.classList.add('map--faded');
     activeForm.classList.add('ad-form--disabled');
@@ -156,7 +155,7 @@ var renderPins = function (data) {
   data.forEach(function (item) {
     var pin = createPin(item);
     fragment.appendChild(pin);
-    pin.addEventListener('click', function(event) {
+    pin.addEventListener('click', function (event) {
       event.preventDefault();
       activePin = event.target.closest('.map__pin');
       if (currentOffer) {
@@ -216,7 +215,7 @@ var activePageHandler = function () {
 
 mapPinMain.addEventListener('mouseup', activePageHandler);
 
-var closePopUpHandler = function(evt) {
+var closePopUpHandler = function (evt) {
   evt.preventDefault();
   closeOffer();
 };
@@ -229,7 +228,7 @@ var closeOffer = function () {
   }
 };
 
-document.addEventListener('keydown', function(evt) {
+document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYCODE) {
     evt.preventDefault();
     closeOffer();
