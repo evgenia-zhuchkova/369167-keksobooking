@@ -30,8 +30,6 @@ var PIN_HEIGHT = 70;
 var PIN_ARROW_HEIGHT = 22;
 var pins = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
-var fragment = document.createDocumentFragment();
-var mapFiltersContainer = document.querySelector('.map__filters-container');
 var cardTemplate = document.querySelector('template').content.querySelector('.popup');
 var newCard = cardTemplate.cloneNode(true);
 var mapElements = document.querySelector('.map');
@@ -42,9 +40,10 @@ var address = document.querySelector('#address');
 var mapPinMainWidth = mapPinMain.querySelector('img').width;
 var mapPinMainHeight = mapPinMain.querySelector('img').height;
 var mapPinMainCenterX = parseInt(mapPinMain.style.left, 10);
-var mapPinMainCenterY = parseInt(mapPinMain.style.top);
+var mapPinMainCenterY = parseInt(mapPinMain.style.top, 10);
 var ESC_KEYCODE = 27;
-var ENTER_KEYCODE = 13;
+var activePin = null;
+var currentOffer = null;
 
 /* Блокировка полей */
 var disableFieldsets = function (flag) {
@@ -69,7 +68,8 @@ var activatePage = function (activePosition) {
   if (activePosition) {
     mapElements.classList.remove('map--faded');
     activeForm.classList.remove('ad-form--disabled');
-  } else {
+  }
+  else {
     mapElements.classList.add('map--faded');
     activeForm.classList.add('ad-form--disabled');
   }
@@ -151,11 +151,22 @@ var createPin = function (data) {
   return template;
 };
 
-var renderPins = function (parametrs) {
-  var lengthArr = parametrs.length;
-  for (var j = 0; j < lengthArr; j++) {
-    fragment.appendChild(createPin(parametrs[j]));
-  }
+var renderPins = function (data) {
+  var fragment = document.createDocumentFragment();
+  data.forEach(function (item) {
+    var pin = createPin(item);
+    fragment.appendChild(pin);
+    pin.addEventListener('click', function(event) {
+      event.preventDefault();
+      activePin = event.target.closest('.map__pin');
+      if (currentOffer) {
+        currentOffer.remove();
+      }
+      currentOffer = createCard(item);
+      currentOffer.querySelector('.popup__close').addEventListener('click', closePopUpHandler);
+      pins.insertAdjacentElement('afterend', currentOffer);
+    });
+  });
   pins.appendChild(fragment);
 };
 
@@ -170,7 +181,7 @@ var createNewElement = function (tagName, className, text) {
 /* Создает DOM - элемент обьявления с данными */
 
 var createCard = function (data) {
-  
+  newCard.querySelector('.popup__avatar').src = data.author.avatar;
   newCard.querySelector('.popup__title').textContent = data.offer.title;
   newCard.querySelector('.popup__text--address').textContent = data.offer.address;
   newCard.querySelector('.popup__text--price').textContent = data.offer.price + '₽/ночь';
@@ -195,35 +206,32 @@ var createCard = function (data) {
   return newCard;
 };
 
-//mapElements.insertBefore(createCard(renderOffers(offerCount)[0]), mapFiltersContainer);
-
 /* Переводит страницу в активное состояние и устанавливает значения поля ввода адреса */
-var mapPinMainMouseUpHandler = function () {
+var activePageHandler = function () {
   activatePage(true);
   renderPins(renderOffers(offerCount));
   reNewAddress();
-  mapPinMain.removeEventListener('mouseup', mapPinMainMouseUpHandler);
+  mapPinMain.removeEventListener('mouseup', activePageHandler);
 };
 
-mapPinMain.addEventListener('mouseup', mapPinMainMouseUpHandler);
+mapPinMain.addEventListener('mouseup', activePageHandler);
 
-var closeButtonEscPressHandler = function (evt) {
-  if (evt.keyCode === ESC_KEYCODE) {
-    closeCard();
+var closePopUpHandler = function(evt) {
+  evt.preventDefault();
+  closeOffer();
+};
+
+var closeOffer = function () {
+  if (currentOffer) {
+    currentOffer.remove();
+    activePin.blur();
+    currentOffer.querySelector('.popup__close').removeEventListener('click', closePopUpHandler);
   }
 };
 
-var closeCard = function () {
-  newCard.classList.add('hidden');
-  document.removeEventListener('keydown', closeButtonEscPressHandler);
-};
-
-var openCard = function () {
-  newCard.classList.remove('hidden');
-  document.addEventListener('keydown', closeButtonEscPressHandler);
-};
-
-var renderCard = function (data) {
-  openCard();
-  mapElements.insertBefore(createCard(renderOffers(offerCount)), mapFiltersContainer);
-};
+document.addEventListener('keydown', function(evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    evt.preventDefault();
+    closeOffer();
+  }
+});
