@@ -27,7 +27,6 @@ var MAX_Y = 500;
 var offerCount = 8;
 var PIN_WIDTH = 50;
 var PIN_HEIGHT = 70;
-var PIN_ARROW_HEIGHT = 22;
 var pins = document.querySelector('.map__pins');
 var pinTemplate = document.querySelector('template').content.querySelector('.map__pin');
 var cardTemplate = document.querySelector('template').content.querySelector('.popup');
@@ -81,7 +80,7 @@ var setAddress = function () {
 
 /* Обновление координат адреса */
 var reNewAddress = function () {
-  address.value = (mapPinMainCenterX + mapPinMainWidth / 2) + ', ' + (mapPinMainCenterY + mapPinMainHeight / 2 + PIN_ARROW_HEIGHT);
+  activeForm.querySelector('#address').value = parseInt((mapPinMainCenterX + mapPinMainWidth / 2), 10) + ', ' + parseInt((mapPinMainCenterY + mapPinMainHeight), 10);
 };
 
 /* Активация страницы */
@@ -309,3 +308,43 @@ var confirmForm = function () {
 };
 
 confirmForm();
+
+/* Перетаскивание метки */
+
+mapPinMain.addEventListener('mousedown', function (evt) {
+  evt.preventDefault();
+  
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+  
+  var mouseMoveHandler = function (moveEvt) {
+    moveEvt.preventDefault();
+
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+    
+     startCoords = {
+      x: moveEvt.clientX,
+      y: moveEvt.clientY
+    };
+    
+    mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
+    mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+    reNewAddress();
+  };
+    
+    var mouseUpHandler = function (upEvt) {
+    upEvt.preventDefault();
+    reNewAddress();
+    document.removeEventListener('mousemove', mouseMoveHandler);
+    document.removeEventListener('mouseup', mouseUpHandler);
+  };
+  
+  document.addEventListener('mousemove', mouseMoveHandler);
+  document.addEventListener('mouseup', mouseUpHandler);
+});
+  
