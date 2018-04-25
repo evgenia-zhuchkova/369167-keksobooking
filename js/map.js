@@ -321,7 +321,6 @@ mapPinMain.addEventListener('mousedown', function (evt) {
       x: startCoords.x - moveEvt.clientX,
       y: startCoords.y - moveEvt.clientY
     };
-  
     var leftCoordinate = mapPinMain.offsetLeft - shift.x;
     var topCoordinate = mapPinMain.offsetTop - shift.y;
     var mapWidth = document.querySelector('.map__overlay').clientWidth;
@@ -337,7 +336,6 @@ mapPinMain.addEventListener('mousedown', function (evt) {
 
     mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
     mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
-  
     var currentPositionX = parseInt(parseInt(mapPinMain.style.left, 10) + MAIN_PIN_WIDTH / 2, 10);
     var currentPositionY = parseInt(parseInt(mapPinMain.style.top, 10) + MAIN_PIN_HEIGHT + MAIN_PIN_TIP, 10);
     setAddress(currentPositionX, currentPositionY);
