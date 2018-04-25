@@ -328,8 +328,8 @@ mapPinMain.addEventListener('mousedown', function (evt) {
     if (limitsPosition({width: mapWidth, height: mapHeight}, {left: leftCoordinate, top: topCoordinate})) {
       return;
     }
-    
-     startCoords = {
+
+    startCoords = {
       x: moveEvt.clientX,
       y: moveEvt.clientY
     };
@@ -341,7 +341,7 @@ mapPinMain.addEventListener('mousedown', function (evt) {
     setAddress(currentPositionX, currentPositionY);
   };
 
-    var mouseUpHandler = function (upEvt) {
+  var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault();
     document.removeEventListener('mousemove', mouseMoveHandler);
     document.removeEventListener('mouseup', mouseUpHandler);
