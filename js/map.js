@@ -86,7 +86,7 @@ var activatePage = function (activePosition) {
   } else {
     mapElements.classList.add('map--faded');
     activeForm.classList.add('ad-form--disabled');
-   
+
   }
 
   setAddress(initialPositionX, initialPositionY);
