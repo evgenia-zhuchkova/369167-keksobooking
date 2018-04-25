@@ -345,6 +345,7 @@ mapPinMain.addEventListener('mousedown', function (evt) {
     setAddress(currentPositionX, currentPositionY);
   };
 
+
     var mouseUpHandler = function (upEvt) {
     upEvt.preventDefault();
     document.removeEventListener('mousemove', mouseMoveHandler);
