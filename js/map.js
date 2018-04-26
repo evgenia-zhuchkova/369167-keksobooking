@@ -75,7 +75,7 @@ window.data.mapPinMain.addEventListener('mousedown', function (evt) {
     var mapWidth = document.querySelector('.map__pins').clientWidth;
     var mapHeight = document.querySelector('.map__pins').clientHeight;
     if (window.tools.limitsPosition({width: mapWidth, height: mapHeight}, {left: leftCoordinate, top: topCoordinate})) {
-      return false;
+      return;
     }
 
     startCoords = {
