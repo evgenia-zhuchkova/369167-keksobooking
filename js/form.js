@@ -1,6 +1,28 @@
 'use strict';
 
 (function () {
+  
+  var drawMessageWindow = function (message) {
+    var div = document.createElement('div');
+    div.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+    div.style.position = 'absolute';
+    div.style.left = 0;
+    div.style.right = 0;
+    div.style.fontSize = '30px';
+    div.textContent = message;
+  };
+  
+  var loadHandler = function (data) {
+    
+  };
+
+  var errorHandler = function (message) {
+    var div = drawMessageWindow(message);
+    document.body.insertAdjacentElement('afterbegin', div);
+  };
+
+  window.backend.load(loadHandler, errorHandler);
+  
   /* Минимальная цена за ночь в зависимости от типа жилья */
   var typeChangeHandler = function () {
     var selectType = window.data.activeForm.querySelector('[name="type"]');
