@@ -2,75 +2,84 @@
 
 (function () {
   
-  var drawMessageWindow = function (message) {
-    var div = document.createElement('div');
-    div.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
-    div.style.position = 'absolute';
-    div.style.left = 0;
-    div.style.right = 0;
-    div.style.fontSize = '30px';
-    div.textContent = message;
-  };
   
-  var loadHandler = function (data) {
-    
-  };
+  /* синхронизация полей времени */
+  var timeInField = document.getElementById('timein');
+  var timeOutField = document.getElementById('timeout');
 
-  var errorHandler = function (message) {
-    var div = drawMessageWindow(message);
-    document.body.insertAdjacentElement('afterbegin', div);
-  };
+  timeInField.addEventListener('change', function () {
+    timeOutField.value = timeInField.value;
+  });
 
-  window.backend.load(loadHandler, errorHandler);
+  timeOutField.addEventListener('change', function () {
+    timeInField.value = timeOutField.value;
+  });
+
   
-  /* Минимальная цена за ночь в зависимости от типа жилья */
-  var typeChangeHandler = function () {
-    var selectType = window.data.activeForm.querySelector('[name="type"]');
-    var labelType = window.data.activeForm.querySelector('[name="price"]');
-    selectType.addEventListener('change', function () {
-      labelType.placeholder = window.data.appartmentPrice[selectType.value];
-      labelType.min = window.data.appartmentPrice[selectType.value];
-    });
+  /* соответствие цены и типа жилья */
+  
+  var minPriceMessage;
+  var priceInput = document.querySelector('.ad-form').elements.price;
+  var selectType = document.querySelector('.ad-form').elements.type;
+  var MIN_PRICES = [1000, 0, 5000, 10000];
+  var APARTMENT_TYPES = ['квартира', 'лачуга', 'дом', 'дворец'];
+  var syncValueMin = function (fields1, fields2, values1, values2) {
+    for (var j = 0; j < fields1.length; j++) {
+      if (fields1.selectedIndex === j) {
+        fields2.value = values1[j];
+        fields2.min = values1[j];
+        minPriceMessage = values2[j] + ' ' + values1[j];
+        break;
+      }
+    }
+    return minPriceMessage;
   };
+  window.tools.synchronizeFields(selectType, priceInput, MIN_PRICES, APARTMENT_TYPES, syncValueMin);
 
-  /* Минимальное число гостей в зависимости от количества комнат */
-  var setupRoomsOfGuests = function (rooms, capacity) {
-    if (rooms === window.data.choiceRooms.oneRoom && capacity !== window.data.choiceGuests.oneGuest) {
-      window.data.selectPlace.setCustomValidity('1 комната — «для 1 гостя»');
-    } else if (rooms === window.data.choiceRooms.twoRooms && capacity !== window.data.choiceGuests.oneGuest && capacity !== window.data.choiceGuests.twoGuests) {
-      window.data.selectPlace.setCustomValidity('2 комнаты — «для 2 гостей» или «для 1 гостя»');
-    } else if (rooms === window.data.choiceRooms.threeRooms && capacity === window.data.choiceGuests.notGuests) {
-      window.data.selectPlace.setCustomValidity('3 комнаты — «для 3 гостей», «для 2 гостей» или «для 1 гостя»');
-    } else if (rooms === window.data.choiceRooms.hundredRooms && capacity !== window.data.choiceGuests.notGuests) {
-      window.data.selectPlace.setCustomValidity('«не для гостей»');
-    } else {
-      window.data.selectPlace.setCustomValidity('');
+  /* соответствие комнат и количества гостей*/
+  var selectRooms = document.querySelector('.ad-form').elements.rooms;
+  var selectCapacity = document.querySelector('.ad-form').elements.capacity;
+  var ACTIVE_CHOICE = [
+    [2],
+    [1, 2],
+    [0, 1, 2],
+    [3]
+  ];
+ var syncValuePersons = function (fields1, fields2) {
+    for (var i = 0; i < fields2.length; i++) {
+      fields2.options[i].disabled = true;
+    }
+    for (var j = 0; j < fields2.length; j++) {
+      if (fields1.selectedIndex === j) {
+        fields2.options[ACTIVE_CHOICE[j][0]].selected = true;
+        for (var k = 0; k < ACTIVE_CHOICE[j].length; k++) {
+          fields2.options[ACTIVE_CHOICE[j][k]].removeAttribute('disabled');
+        }
+      }
     }
   };
+  
+  window.tools.synchronizeFields(selectRooms, selectCapacity, '', '', syncValuePersons);
 
-  /* Синхронизация времени заезда и времени выезда */
-  var setupTimeAccommodation = function () {
-    var selectTimeIn = window.data.activeForm.querySelector('[name="timein"]');
-    var selectTimeOut = window.data.activeForm.querySelector('[name="timeout"]');
-    if (selectTimeIn.value !== selectTimeOut.value) {
-      selectTimeIn.setCustomValidity('Время заезда  и время выезда должно совпадать');
-    } else {
-      selectTimeIn.setCustomValidity('');
+
+
+var MIN_LENGTH_TITLE = 30;
+  var MAX_LENGTH_TITLE = 100;
+  var MIN_PRICE = 0;
+  var MAX_PRICE = 1000000;
+
+ var sendError = function (evt) {
+   var priceInput = document.querySelector('.ad-form').elements.price;
+   var titleInput = document.querySelector('.ad-form').elements.title;
+    if (titleInput.value.length < MIN_LENGTH_TITLE || titleInput.value.length > MAX_LENGTH_TITLE) {
+      console.log('error');
+      evt.preventDefault();
     }
+    if (priceInput.min < MIN_PRICE || priceInput.max > MAX_PRICE || priceInput.type !== 'number' || priceInput.value === '') {
+      console.log('error');
+      evt.preventDefault();
+    }
+    evt.preventDefault();
   };
 
-  var formButtonClickHandler = function () {
-    setupRoomsOfGuests(window.data.selectRooms.value, window.data.selectPlace.value);
-    setupTimeAccommodation();
-  };
-
-  /* Подтверждение правильности заполнения формы */
-  var confirmForm = function () {
-    var selectType = window.data.activeForm.querySelector('[name="type"]');
-    var submitFormButton = window.data.activeForm.querySelector('[type="submit"]');
-    selectType.addEventListener('focus', typeChangeHandler);
-    submitFormButton.addEventListener('click', formButtonClickHandler);
-  };
-
-  confirmForm();
 })();
