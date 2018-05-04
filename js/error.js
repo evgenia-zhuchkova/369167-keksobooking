@@ -20,14 +20,10 @@
 
   window.error = {
 
-    showFormError: function (elem, message) {
+    show: function (elem, message) {
       elem.style.border = '1px solid #D8000C';
       var box = document.createElement('p');
-      box.style = 'z-index: 500; margin: 0 auto; text-align: center; background-color: #FFBABA; color: #D8000C;';
-      box.style.position = 'fixed';
-      box.style.left = 0;
-      box.style.right = 0;
-      box.style.fontSize = '30px';
+      box.classList.add('error-message');
       box.textContent = message;
       elem.parentElement.appendChild(box);
       elem.addEventListener('focus', inputFocusHandler);

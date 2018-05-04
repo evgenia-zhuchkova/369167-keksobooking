@@ -11,17 +11,13 @@
     house: 5000,
     palace: 10000
   };
-  var _10n = {
-    bungalo: 'Сарай',
-    flat: 'Квартира',
-    house: 'Дом',
-    palace: 'Дворец'
-  };
+  
   var form = document.querySelector('.ad-form');
+  var successMsg = document.querySelector('.success');
   var valid = true;
   
-  function formSubmitHandler(event) {
-    event.preventDefault();
+  function formSubmitHandler(evt) {
+    evt.preventDefault();
     var fields = Array.from(form.elements);
 
     fields.forEach(function (elem) {
@@ -31,13 +27,21 @@
             if (elem.name === 'address') {
               if (!elem.value.length) {
                 valid = false;
-                window.error.showFormError(elem, 'Поле не может быть пустым');
+                window.error.show(elem, 'Поле не может быть пустым');
               }
             }
             if (elem.name === 'title') {
-              if (elem.value.length < MIN_LENGTH || elem.value.length > MAX_LENGTH) {
+              if (!elem.value.length) {
                 valid = false;
-                window.error.showFormError(elem);
+                window.error.show(elem, 'Поле не может быть пустым');
+              }
+              if (elem.value.length && elem.value.length < MIN_LENGTH) {
+                valid = false;
+                window.error.show(elem, 'Поле не может содержать менее ' + MIN_LENGTH + ' символов');
+              }
+              if (elem.value.length > MAX_LENGTH) {
+                valid = false;
+                window.error.show(elem, 'Поле не может содержать более ' + MAX_LENGTH + ' символов');
               }
             }
             break;
@@ -45,7 +49,7 @@
             if (elem.name === 'price') {
               if(elem.value < LIMIT_PRICE[form.type.options[form.type.selectedIndex].value]) {
                 valid = false;
-                window.error.showFormError(elem, 'Для поля ' + _10n[LIMIT_PRICE[form.type.options[form.type.selectedIndex].value]] + 'мингимальная цена -' + LIMIT_PRICE[form.type.options[form.type.selectedIndex].value]);
+                window.error.show(elem, 'Для типа жилья: ' + window.tools.TYPE_PARALLEL[[form.type.options[form.type.selectedIndex].value]] + ' минимальная цена - ' + LIMIT_PRICE[form.type.options[form.type.selectedIndex].value] + ' руб.');
               }
             }
             break;
@@ -56,14 +60,21 @@
       window.tools.ajax({
         method: 'POST',
         url: 'https://js.dump.academy/keksobooking',
-        data: new FormData(form)
+        data: new FormData(form),
+        success: function() {
+          successMsg.classList.remove('hidden');
+          window.scrollTo (0, 0);
+          setTimeout(function () {
+            window.location.reload();
+          }, 2000);
+        }
       });
     }
   }
   form.addEventListener('submit', formSubmitHandler);
-  
-  
-  
-
-
+  form.addEventListener('reset', function(evt) {
+    evt.preventDefault();
+    window.scrollTo (0, 0);
+    window.location.reload();
+  });
 })();

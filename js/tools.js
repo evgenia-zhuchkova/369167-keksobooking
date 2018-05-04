@@ -114,8 +114,13 @@
       field1.addEventListener(eventNAme, function (evt) {
         callback(field1, field2);
       });
+    },
+   
+    TYPE_PARALLEL: {
+    bungalo: 'cарай',
+    flat: 'квартира',
+    house: 'дом',
+    palace: 'дворец'
     }
-    
-    
   };
 })();

@@ -4,6 +4,7 @@
   var PIN_WIDTH = 50;
   var PIN_HEIGHT = 70;
   var ESC_KEYCODE = 27;
+  var MAX_VIEW_OFFERS = 5;
 
 
   var template = document.querySelector('template');
@@ -27,7 +28,7 @@
     newCard.querySelector('.popup__title').textContent = data.offer.title;
     newCard.querySelector('.popup__text--address').textContent = data.offer.address;
     newCard.querySelector('.popup__text--price').textContent = data.offer.price + '₽/ночь';
-    newCard.querySelector('.popup__type').textContent = data.offer.type;
+    newCard.querySelector('.popup__type').textContent = window.tools.TYPE_PARALLEL[data.offer.type];
     newCard.querySelector('.popup__text--capacity').textContent = data.offer.rooms + ' комнат для ' + data.offer.guests + ' гостей';
     newCard.querySelector('.popup__text--time').textContent = 'заезд после ' + data.offer.checkin + ', ' + 'выезд до ' + data.offer.checkout;
     newCard.querySelector('.popup__features').innerHTML = '';
@@ -62,7 +63,9 @@
   window.ad = {
     renderPins: function (data, target) {
       var fragment = document.createDocumentFragment();
-      data.forEach(function (item) {
+      var count = data.length > 5 ? MAX_VIEW_OFFERS : data.length;
+      var viewOffers = window.tools.getRandomArr(data, count);
+      viewOffers.forEach(function (item) {
         var pin = createPin(item);
         fragment.appendChild(pin);
         pin.addEventListener('click', function (evt) {

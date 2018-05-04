@@ -1,55 +1,54 @@
 'use strict';
 
 (function () {
-  var MAX_PRICE = 50000;
-  var MIN_PRICE = 10000;
+  var filteredList = [];
+  var filterContainer = document.querySelector('.tokyo__filters-container');
+  var filterHousing = filterContainer.querySelector('#housing_type');
+  var filterPrice = filterContainer.querySelector('#housing_price');
+  var filterRoomNumber = filterContainer.querySelector('#housing_room-number');
+  var filterGuestsNumber = filterContainer.querySelector('#housing_guests-number');
+  var filterFeatures = filterContainer.querySelector('#housing_features');
 
-  var selectCriterion = {
-    type: 'any',
-    price: 'any',
-    rooms: 'any',
-    guests: 'any',
-    wifi: false,
-    dishwasher: false,
-    parking: false,
-    washer: false,
-    elevator: false,
-    conditioner: false,
-    features: []
-  };
+  var filterList = [
+    // Takes ONE object, returns true / false
+    function priceFilter(data) {
+      var filterPriceValue = filterPrice.value;
+      if (filterPriceValue === 'middle') {
+        return data.offer.price > 10000 && data.offer.price < 50000;
+      } else if (filterPriceValue === 'low') {
+        return data.offer.price < 10000;
+      } else {
+        return data.offer.price > 50000;
+      }
+    },
+    function roomNumberFilter(data) {
+      var filterRoomNumberValue = filterRoomNumber.value;
+      if (filterRoomNumberValue === '1') {
+        return data.offer.rooms === 1;
+      } else if (filterRoomNumberValue === '2') {
+        return data.offer.rooms === 2;
+      } else if (filterRoomNumberValue === '3') {
+        return data.offer.rooms === 3;
+      } else {
+        return true;
+      }
+    },
+    // ...
+    // And so on...
+    // ...
+  ];
 
-  window.filters = {
-    createFilters: function (data, elem, callback) {
-      var filtrate = function (field, item) {
-        var result = true;
-
-        if (selectCriterion[field] !== 'any') {
-          result = selectCriterion[field] === item.offer[field];
-        }
-        return result;
-      };
-
-      var filtratePrice = function (item) {
-        var result = true;
-
-        if (selectCriterion.price !== 'any') {
-          switch (selectCriterion.price) {
-            case 'middle':
-              result = item.offer.price >= MIN_PRICE && item.offer.price <= MAX_PRICE;
-              break;
-            case 'low':
-              result = item.offer.price < MIN_PRICE;
-              break;
-            case 'high':
-              result = item.offer.price > MAX_PRICE;
-              break;
-            default:
-              break;
-          }
-        }
-        return result;
-      };
+  function filterAllFields(data) {
+    for (var i = 0; i < filterList.length; ++i) {
+      var filter = filterList[i];
+      if (!filter(data)) {
+        return false;
+      }
     }
-  };
+    return true;
+  }
 
+  window.filter = function (offerList) {
+    return offerList.filter(filterAllFields);
+  };
 })();

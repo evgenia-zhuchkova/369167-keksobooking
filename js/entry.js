@@ -43,6 +43,7 @@
     map.classList.remove('map--faded');
     formFields.forEach(function(item) {
       item.disabled = false;
+      item.parentElement.style.position = 'relative';
     });
     adForm.address.value = window.tools.getAddress({
       element: mainPin,
@@ -61,8 +62,6 @@
     document.removeEventListener('loadData', loadDataHandler);
     window.map.activationPinMove(mainPin);
   };
-  
-  
 
   window.tools.ajax({
     url: 'https://js.dump.academy/keksobooking/data',
@@ -71,10 +70,9 @@
       window.data.set(data);
       document.dispatchEvent(loadData);
     },
-    sendError: window.error.showFormError
+    sendError: window.error.show
 
   });
-
 
   document.addEventListener('DOMContentLoaded', function(evt) {
     adForm.address.readOnly = true;
@@ -108,14 +106,5 @@
         }
       }
     });
-  });
-  
- /* window.filters.createFilters(window.data.get(), filters, function (data) {
-      window.data.set(data);
-      window.debounce(function () {
-        window.ad.renderPins(window.data.get(), pinsContainer);
-      });
-    }); */
-  
-  
+  });  
 })();
