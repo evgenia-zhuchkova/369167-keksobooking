@@ -2,8 +2,6 @@
 
 (function () {
 
-  var valid = true;
-
   var inputFocusHandler = function (evt) {
     if (evt.target.style.border) {
       evt.target.style.border = '';
