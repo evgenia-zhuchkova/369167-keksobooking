@@ -104,14 +104,18 @@
       };
       xhr.send(options.data);
     },
-    getAddress: function(options) {
-      return 'x: ' +  (parseInt(options.left, 10) + options.width / 2) + '  y: ' + (parseInt(options.top, 10) + options.height + options.delta);
+    
+   getAddress: function(options) {
+      return 'x: ' +  (parseInt(options.left, 10) + parseInt(options.width / 2, 10)) + '  y: ' + (parseInt(options.top, 10) + parseInt(options.height) + options.delta);
     },
     
-    synchronizeFields: function (field1, field2, value1, value2, callback) {
-    field1.addEventListener('change', (function () {
-      callback(field1, field2, value1, value2);
-    }));
-  }
+    synchronizeFields: function(eventNAme, field1, field2, callback) {
+      callback(field1, field2);
+      field1.addEventListener(eventNAme, function (evt) {
+        callback(field1, field2);
+      });
+    }
+    
+    
   };
 })();
