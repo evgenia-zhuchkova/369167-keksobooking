@@ -22,8 +22,8 @@
 
   var loadData = new Event('loadData', {bubbles: true, cancelable: true});
 
-  var deactivatePage = function() {
-    adForm.address.value = window.tools.getAddress ({
+  var deactivatePage = function () {
+    adForm.address.value = window.tools.getAddress({
       element: mainPin,
       left: mainPin.style.left,
       width: mainPin.offsetWidth,
@@ -36,14 +36,14 @@
     });
   };
 
-  var activePageHandler = function() {
+  var activePageHandler = function () {
     adForm.classList.remove('ad-form--disabled');
     map.classList.remove('map--faded');
     formFields.forEach(function (item) {
       item.disabled = false;
       item.parentElement.style.position = 'relative';
     });
-    adForm.address.value = window.tools.getAddress ({
+    adForm.address.value = window.tools.getAddress({
       element: mainPin,
       left: mainPin.style.left,
       width: mainPin.offsetWidth,
@@ -64,7 +64,7 @@
   window.tools.ajax({
     url: 'https://js.dump.academy/keksobooking/data',
     type: 'json',
-    success: function(data) {
+    success: function (data) {
       window.data.set(data);
       document.dispatchEvent(loadData);
     },

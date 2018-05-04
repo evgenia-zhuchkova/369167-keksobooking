@@ -15,15 +15,15 @@
   var currentOffer = null;
 
   var createPin = function (data) {
-  var template = pinTemplate.cloneNode(true);
-  template.style.left = data.location.x - PIN_WIDTH / 2 + 'px';
-  template.style.top = data.location.y + PIN_HEIGHT + 'px';
-  template.children[0].src = data.author.avatar;
-  template.children[0].alt = data.offer.title;
-  return template;
+    var template = pinTemplate.cloneNode(true);
+    template.style.left = data.location.x - PIN_WIDTH / 2 + 'px';
+    template.style.top = data.location.y + PIN_HEIGHT + 'px';
+    template.children[0].src = data.author.avatar;
+    template.children[0].alt = data.offer.title;
+    return template;
   };
-  
-  var createCard = function(data) {
+
+  var createCard = function (data) {
     var newCard = cardTemplate.cloneNode(true);
     newCard.querySelector('.popup__avatar').src = data.author.avatar;
     newCard.querySelector('.popup__title').textContent = data.offer.title;

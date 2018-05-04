@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  
+
   var valid = true;
 
   var inputFocusHandler = function (evt) {

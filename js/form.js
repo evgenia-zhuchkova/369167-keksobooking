@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-  
+
   var MIN_LENGTH = 30;
   var MAX_LENGTH = 100;
   var LIMIT_PRICE = {
@@ -62,9 +62,9 @@
         data: new FormData(form),
         success: function () {
           successMsg.classList.remove('hidden');
-          window.scrollTo (0, 0);
+          window.scrollTo(0, 0);
           setTimeout(function () {
-            window.location.reload ();
+            window.location.reload();
           }, 2000);
         }
       });
@@ -73,7 +73,7 @@
   form.addEventListener('submit', formSubmitHandler);
   form.addEventListener('reset', function (evt) {
     evt.preventDefault();
-    window.scrollTo (0, 0);
-    window.location.reload ();
+    window.scrollTo(0, 0);
+    window.location.reload();
   });
 })();
