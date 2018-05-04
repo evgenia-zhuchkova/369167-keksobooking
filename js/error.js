@@ -5,7 +5,6 @@
   var valid = true;
 
   var inputFocusHandler = function (evt) {
-    valid = true;
     if (evt.target.style.border) {
       evt.target.style.border = '';
       var box = evt.target.parentElement.querySelector('.error-message');
