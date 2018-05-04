@@ -7,21 +7,22 @@
   var MAX_VIEW_OFFERS = 5;
 
 
-  var template = document.querySelector('template');
-  var pinTemplate = template.content.querySelector('.map__pin');
-  var cardTemplate = template.content.querySelector('.map__card');
+  var templateTotal = document.querySelector('template');
+  var pinTemplate = templateTotal.content.querySelector('.map__pin');
+  var cardTemplate = templateTotal.content.querySelector('.map__card');
 
   var currentPin = null;
   var currentOffer = null;
 
   var createPin = function (data) {
-    var template = pinTemplate.cloneNode(true);
-    template.style.left = data.location.x - PIN_WIDTH / 2 + 'px';
-    template.style.top = data.location.y + PIN_HEIGHT + 'px';
-    template.children[0].src = data.author.avatar;
-    template.children[0].alt = data.offer.title;
-    return template;
+  var template = pinTemplate.cloneNode(true);
+  template.style.left = data.location.x - PIN_WIDTH / 2 + 'px';
+  template.style.top = data.location.y + PIN_HEIGHT + 'px';
+  template.children[0].src = data.author.avatar;
+  template.children[0].alt = data.offer.title;
+  return template;
   };
+  
   var createCard = function(data) {
     var newCard = cardTemplate.cloneNode(true);
     newCard.querySelector('.popup__avatar').src = data.author.avatar;
@@ -48,7 +49,7 @@
     });
     return newCard;
   };
-  var closePopUpHandler = function (evt) {
+  var closePopUpHandler = function () {
     if (currentOffer) {
       currentOffer.remove();
       currentPin.blur();
@@ -69,14 +70,14 @@
         var pin = createPin(item);
         fragment.appendChild(pin);
         pin.addEventListener('click', function (evt) {
-           event.preventDefault();
-           currentPin = evt.target.closest('.map__pin');
-           if (currentOffer) {
-             currentOffer.remove();
-           }
-           currentOffer = createCard(item);
-           currentOffer.querySelector('.popup__close').addEventListener('click', closePopUpHandler);
-           target.insertAdjacentElement('afterend', currentOffer);
+          event.preventDefault();
+          currentPin = evt.target.closest('.map__pin');
+          if (currentOffer) {
+            currentOffer.remove();
+          }
+          currentOffer = createCard(item);
+          currentOffer.querySelector('.popup__close').addEventListener('click', closePopUpHandler);
+          target.insertAdjacentElement('afterend', currentOffer);
         });
       });
       target.appendChild(fragment);

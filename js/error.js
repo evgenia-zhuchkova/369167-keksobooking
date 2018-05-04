@@ -1,22 +1,22 @@
 'use strict';
 
 (function () {
-
+  
   var valid = true;
 
-  function inputFocusHandler(event) {
+  var inputFocusHandler = function (evt) {
     valid = true;
-    if (event.target.style.border) {
-      event.target.style.border = '';
-      var box = event.target.parentElement.querySelector('.error-message');
-      event.target.parentElement.removeChild(box);
+    if (evt.target.style.border) {
+      evt.target.style.border = '';
+      var box = evt.target.parentElement.querySelector('.error-message');
+      evt.target.parentElement.removeChild(box);
     }
-  }
+  };
 
-  function inputBlurHandler(event) {
-    event.target.removeEventListener('focus', inputFocusHandler);
-    event.target.removeEventListener('blur', inputBlurHandler);
-  }
+  var inputBlurHandler = function (evt) {
+    evt.target.removeEventListener('focus', inputFocusHandler);
+    evt.target.removeEventListener('blur', inputBlurHandler);
+  };
 
   window.error = {
 

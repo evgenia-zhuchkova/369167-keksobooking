@@ -20,12 +20,10 @@
   var formFields = Array.from(adForm.elements);
   var pinsContainer = map.querySelector('.map__pins');
 
-
   var loadData = new Event('loadData', {bubbles: true, cancelable: true});
 
-
   var deactivatePage = function() {
-    adForm.address.value = window.tools.getAddress({
+    adForm.address.value = window.tools.getAddress ({
       element: mainPin,
       left: mainPin.style.left,
       width: mainPin.offsetWidth,
@@ -33,7 +31,7 @@
       height: mainPin.offsetHeight / 2,
       delta: 0
     });
-    formFields.forEach(function(item) {
+    formFields.forEach(function (item) {
       item.disabled = true;
     });
   };
@@ -41,11 +39,11 @@
   var activePageHandler = function() {
     adForm.classList.remove('ad-form--disabled');
     map.classList.remove('map--faded');
-    formFields.forEach(function(item) {
+    formFields.forEach(function (item) {
       item.disabled = false;
       item.parentElement.style.position = 'relative';
     });
-    adForm.address.value = window.tools.getAddress({
+    adForm.address.value = window.tools.getAddress ({
       element: mainPin,
       left: mainPin.style.left,
       width: mainPin.offsetWidth,
@@ -57,7 +55,7 @@
     mainPin.removeEventListener('mouseup', activePageHandler);
   };
 
-  var loadDataHandler = function(evt) {
+  var loadDataHandler = function () {
     mainPin.addEventListener('mouseup', activePageHandler);
     document.removeEventListener('loadData', loadDataHandler);
     window.map.activationPinMove(mainPin);
@@ -74,17 +72,17 @@
 
   });
 
-  document.addEventListener('DOMContentLoaded', function(evt) {
+  document.addEventListener('DOMContentLoaded', function () {
     adForm.address.readOnly = true;
     deactivatePage();
     document.addEventListener('loadData', loadDataHandler);
-    window.tools.synchronizeFields('change', adForm.type, adForm.price, function() {
+    window.tools.synchronizeFields('change', adForm.type, adForm.price, function () {
       adForm.price.placeholder = LIMIT_PRICE[adForm.type.value];
     });
-    window.tools.synchronizeFields('change', adForm.timein, adForm.timeout, function() {
+    window.tools.synchronizeFields('change', adForm.timein, adForm.timeout, function () {
       adForm.timeout.selectedIndex = adForm.timein.selectedIndex;
     });
-    window.tools.synchronizeFields('change', adForm.timeout, adForm.timein, function() {
+    window.tools.synchronizeFields('change', adForm.timeout, adForm.timein, function () {
       adForm.timein.selectedIndex = adForm.timeout.selectedIndex;
     });
     window.tools.synchronizeFields('change', adForm.rooms, adForm.capacity, function (param1, param2) {

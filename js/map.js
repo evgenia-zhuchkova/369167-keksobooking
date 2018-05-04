@@ -1,7 +1,7 @@
 'use strict';
 
 /* Перетаскивание метки */
-(function() {
+(function () {
   var mainPin = document.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
   var movePinHandler = function (evt) {
@@ -36,13 +36,13 @@
 
       target.style.left = (target.offsetLeft - shift.x) + 'px';
       target.style.top = (target.offsetTop - shift.y) + 'px';
-      
+
       adForm.address.value = window.tools.getAddress({
         left: target.style.left,
-      width: mainPin.offsetWidth,
-      top: target.style.top,
-      height: mainPin.offsetHeight,
-      delta: 22
+        width: mainPin.offsetWidth,
+        top: target.style.top,
+        height: mainPin.offsetHeight,
+        delta: 22
       });
     };
 

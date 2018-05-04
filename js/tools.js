@@ -1,12 +1,12 @@
 'use strict';
 
 (function () {
-  
+
   var topLimitY = 150;
   var MAIN_PIN_WIDTH = 65;
   var MAIN_PIN_HEIGHT = 65;
-  var MAIN_PIN_TIP =22;
-  
+  var MAIN_PIN_TIP = 22;
+
   var objectsMerge = function (source, target) {
     var result = {};
     for (var key in target) {
@@ -20,7 +20,7 @@
     }
     return result;
   };
-  
+
   window.tools = {
     /* Случайное целое число в интервале от min до max, включая min и max */
     getRandomInteger: function (min, max) {
@@ -59,8 +59,8 @@
       element.textContent = text || '';
       return element;
     },
-    
-     ajax: function (settings) {
+
+    ajax: function (settings) {
       var defSettings = {
         method: 'GET', // метод запроса
         url: '', // адрес запроса
@@ -104,23 +104,23 @@
       };
       xhr.send(options.data);
     },
-    
-   getAddress: function(options) {
-      return 'x: ' +  (parseInt(options.left, 10) + parseInt(options.width / 2, 10)) + '  y: ' + (parseInt(options.top, 10) + parseInt(options.height) + options.delta);
+
+    getAddress: function (options) {
+      return 'x: ' +  (parseInt(options.left, 10) + parseInt(options.width / 2, 10)) + '  y: ' + (parseInt(options.top, 10) + parseInt(options.height, 10) + options.delta);
     },
-    
-    synchronizeFields: function(eventNAme, field1, field2, callback) {
+
+    synchronizeFields: function (eventNAme, field1, field2, callback) {
       callback(field1, field2);
-      field1.addEventListener(eventNAme, function (evt) {
+      field1.addEventListener(eventNAme, function () {
         callback(field1, field2);
       });
     },
-   
+
     TYPE_PARALLEL: {
-    bungalo: 'cарай',
-    flat: 'квартира',
-    house: 'дом',
-    palace: 'дворец'
+      bungalo: 'cарай',
+      flat: 'квартира',
+      house: 'дом',
+      palace: 'дворец'
     }
   };
 })();
