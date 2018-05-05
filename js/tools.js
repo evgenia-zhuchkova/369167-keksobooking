@@ -115,7 +115,7 @@
         callback(field1, field2);
       });
     },
-    
+
     checkEntry: function (targetItems, values) {
       for (var i = 0; i < values.length; i++) {
         if (targetItems.indexOf(values[i]) === -1) {

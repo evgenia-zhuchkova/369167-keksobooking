@@ -67,7 +67,7 @@
       createdTags.forEach(function (item) {
         item.remove();
       });
-      if(currentOffer) {
+      if (currentOffer) {
         currentOffer.remove();
       }
       createdTags = [];
