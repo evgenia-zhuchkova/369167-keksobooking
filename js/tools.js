@@ -106,7 +106,7 @@
     },
 
     getAddress: function (options) {
-      return 'x: ' + (parseInt(options.left, 10) + parseInt(options.width / 2, 10)) + '  y: ' + (parseInt(options.top, 10) + parseInt(options.height, 10) + options.delta);
+      return (parseInt(options.left, 10) + parseInt(options.width / 2, 10)) + ', ' + (parseInt(options.top, 10) + parseInt(options.height, 10) + options.delta);
     },
 
     synchronizeFields: function (eventNAme, field1, field2, callback) {
@@ -114,6 +114,15 @@
       field1.addEventListener(eventNAme, function () {
         callback(field1, field2);
       });
+    },
+    
+    checkEntry: function (targetItems, values) {
+      for (var i = 0; i < values.length; i++) {
+        if (targetItems.indexOf(values[i]) === -1) {
+          return false;
+        }
+      }
+      return true;
     },
 
     TYPE_PARALLEL: {

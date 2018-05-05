@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var DEBOUNCE_INTERVAL = 1000;
   var LIMIT_PRICE = {
     bungalo: 0,
     flat: 1000,
@@ -19,7 +20,8 @@
   var map = document.querySelector('.map');
   var formFields = Array.from(adForm.elements);
   var pinsContainer = map.querySelector('.map__pins');
-
+  var filterForm = document.querySelector('.map__filters');
+  var lastTimeout = null;
   var loadData = new Event('loadData', {bubbles: true, cancelable: true});
 
   var deactivatePage = function () {
@@ -59,6 +61,14 @@
     mainPin.addEventListener('mouseup', activePageHandler);
     document.removeEventListener('loadData', loadDataHandler);
     window.map.activationPinMove(mainPin);
+    window.filters.init(window.data.get(), filterForm, function (data) {
+      if (lastTimeout) {
+        window.clearTimeout(lastTimeout);
+      }
+      lastTimeout = window.setTimeout(function () {
+        window.ad.renderPins(data, pinsContainer);
+      }, DEBOUNCE_INTERVAL);
+    });
   };
 
   window.tools.ajax({

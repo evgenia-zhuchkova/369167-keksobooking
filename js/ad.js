@@ -13,6 +13,7 @@
 
   var currentPin = null;
   var currentOffer = null;
+  var createdTags = [];
 
   var createPin = function (data) {
     var template = pinTemplate.cloneNode(true);
@@ -63,11 +64,19 @@
   });
   window.ad = {
     renderPins: function (data, target) {
+      createdTags.forEach(function (item) {
+        item.remove();
+      });
+      if(currentOffer) {
+        currentOffer.remove();
+      }
+      createdTags = [];
       var fragment = document.createDocumentFragment();
       var count = data.length > 5 ? MAX_VIEW_OFFERS : data.length;
       var viewOffers = window.tools.getRandomArr(data, count);
       viewOffers.forEach(function (item) {
         var pin = createPin(item);
+        createdTags.push(pin);
         fragment.appendChild(pin);
         pin.addEventListener('click', function (evt) {
           event.preventDefault();
