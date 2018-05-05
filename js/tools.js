@@ -2,7 +2,7 @@
 
 (function () {
 
-  var topLimitY = 150;
+  var TOP_LIMIT_Y = 150;
   var MAIN_PIN_WIDTH = 65;
   var MAIN_PIN_HEIGHT = 65;
   var MAIN_PIN_TIP = 22;
@@ -49,7 +49,7 @@
 
     /* Ограничение по перемещению метки */
     limitsPosition: function (container, position) {
-      return ((position.left < 0) || (position.top < topLimitY) || (position.left + MAIN_PIN_WIDTH > container.width) || (position.top + MAIN_PIN_HEIGHT + MAIN_PIN_TIP > container.height));
+      return ((position.left < 0) || (position.top < TOP_LIMIT_Y) || (position.left + MAIN_PIN_WIDTH > container.width) || (position.top + MAIN_PIN_HEIGHT + MAIN_PIN_TIP > container.height));
     },
 
     /* Создает DOM - элемент с тегом, именем класса, текстом */

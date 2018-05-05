@@ -77,9 +77,7 @@
     success: function (data) {
       window.data.set(data);
       document.dispatchEvent(loadData);
-    },
-    sendError: window.error.show
-
+    }
   });
 
   document.addEventListener('DOMContentLoaded', function () {
