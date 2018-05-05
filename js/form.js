@@ -15,6 +15,30 @@
   var successMsg = document.querySelector('.success');
   var valid = true;
 
+  var inputFocusHandler = function (evt) {
+    valid = true;
+    if (evt.target.style.border) {
+      evt.target.style.border = '';
+      var box = evt.target.parentElement.querySelector('.error-message');
+      evt.target.parentElement.removeChild(box);
+    }
+  };
+
+  var inputBlurHandler = function (evt) {
+    evt.target.removeEventListener('focus', inputFocusHandler);
+    evt.target.removeEventListener('blur', inputBlurHandler);
+  };
+
+  var showError = function (elem, message) {
+    elem.style.border = '1px solid #D8000C';
+    var box = document.createElement('p');
+    box.classList.add('error-message');
+    box.textContent = message;
+    elem.parentElement.appendChild(box);
+    elem.addEventListener('focus', inputFocusHandler);
+    elem.addEventListener('blur', inputBlurHandler);
+  };
+
   var formSubmitHandler = function (evt) {
     evt.preventDefault();
     var fields = Array.from(form.elements);
@@ -26,21 +50,17 @@
             if (elem.name === 'address') {
               if (!elem.value.length) {
                 valid = false;
-                window.error.show(elem, 'Поле не может быть пустым');
+                showError(elem, 'Поле не может быть пустым');
               }
             }
             if (elem.name === 'title') {
-              if (!elem.value.length) {
+              if (elem.value.length < MIN_LENGTH) {
                 valid = false;
-                window.error.show(elem, 'Поле не может быть пустым');
-              }
-              if (elem.value.length && elem.value.length < MIN_LENGTH) {
-                valid = false;
-                window.error.show(elem, 'Поле не может содержать менее ' + MIN_LENGTH + ' символов');
+                showError(elem, 'Поле не может содержать менее ' + MIN_LENGTH + ' символов');
               }
               if (elem.value.length > MAX_LENGTH) {
                 valid = false;
-                window.error.show(elem, 'Поле не может содержать более ' + MAX_LENGTH + ' символов');
+                showError(elem, 'Поле не может содержать более ' + MAX_LENGTH + ' символов');
               }
             }
             break;
@@ -48,7 +68,7 @@
             if (elem.name === 'price') {
               if (elem.value < LIMIT_PRICE[form.type.options[form.type.selectedIndex].value]) {
                 valid = false;
-                window.error.show(elem, 'Для типа жилья: ' + window.tools.TYPE_PARALLEL[[form.type.options[form.type.selectedIndex].value]] + ' минимальная цена - ' + LIMIT_PRICE[form.type.options[form.type.selectedIndex].value] + ' руб.');
+                showError(elem, 'Для типа жилья: ' + window.tools.TYPE_PARALLEL[[form.type.options[form.type.selectedIndex].value]] + ' минимальная цена - ' + LIMIT_PRICE[form.type.options[form.type.selectedIndex].value] + ' руб.');
               }
             }
             break;
