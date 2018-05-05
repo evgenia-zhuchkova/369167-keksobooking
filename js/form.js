@@ -1,54 +1,79 @@
 'use strict';
 
 (function () {
-  /* Минимальная цена за ночь в зависимости от типа жилья */
-  var typeChangeHandler = function () {
-    var selectType = window.data.activeForm.querySelector('[name="type"]');
-    var labelType = window.data.activeForm.querySelector('[name="price"]');
-    selectType.addEventListener('change', function () {
-      labelType.placeholder = window.data.appartmentPrice[selectType.value];
-      labelType.min = window.data.appartmentPrice[selectType.value];
+
+  var MIN_LENGTH = 30;
+  var MAX_LENGTH = 100;
+  var LIMIT_PRICE = {
+    bungalo: 0,
+    flat: 1000,
+    house: 5000,
+    palace: 10000
+  };
+
+  var form = document.querySelector('.ad-form');
+  var successMsg = document.querySelector('.success');
+  var valid = true;
+
+  var formSubmitHandler = function (evt) {
+    evt.preventDefault();
+    var fields = Array.from(form.elements);
+
+    fields.forEach(function (elem) {
+      if (elem.nodeName.toLowerCase() === 'input') {
+        switch (elem.type.toLowerCase()) {
+          case 'text':
+            if (elem.name === 'address') {
+              if (!elem.value.length) {
+                valid = false;
+                window.error.show(elem, 'Поле не может быть пустым');
+              }
+            }
+            if (elem.name === 'title') {
+              if (!elem.value.length) {
+                valid = false;
+                window.error.show(elem, 'Поле не может быть пустым');
+              }
+              if (elem.value.length && elem.value.length < MIN_LENGTH) {
+                valid = false;
+                window.error.show(elem, 'Поле не может содержать менее ' + MIN_LENGTH + ' символов');
+              }
+              if (elem.value.length > MAX_LENGTH) {
+                valid = false;
+                window.error.show(elem, 'Поле не может содержать более ' + MAX_LENGTH + ' символов');
+              }
+            }
+            break;
+          case 'number':
+            if (elem.name === 'price') {
+              if (elem.value < LIMIT_PRICE[form.type.options[form.type.selectedIndex].value]) {
+                valid = false;
+                window.error.show(elem, 'Для типа жилья: ' + window.tools.TYPE_PARALLEL[[form.type.options[form.type.selectedIndex].value]] + ' минимальная цена - ' + LIMIT_PRICE[form.type.options[form.type.selectedIndex].value] + ' руб.');
+              }
+            }
+            break;
+        }
+      }
     });
-  };
-
-  /* Минимальное число гостей в зависимости от количества комнат */
-  var setupRoomsOfGuests = function (rooms, capacity) {
-    if (rooms === window.data.choiceRooms.oneRoom && capacity !== window.data.choiceGuests.oneGuest) {
-      window.data.selectPlace.setCustomValidity('1 комната — «для 1 гостя»');
-    } else if (rooms === window.data.choiceRooms.twoRooms && capacity !== window.data.choiceGuests.oneGuest && capacity !== window.data.choiceGuests.twoGuests) {
-      window.data.selectPlace.setCustomValidity('2 комнаты — «для 2 гостей» или «для 1 гостя»');
-    } else if (rooms === window.data.choiceRooms.threeRooms && capacity === window.data.choiceGuests.notGuests) {
-      window.data.selectPlace.setCustomValidity('3 комнаты — «для 3 гостей», «для 2 гостей» или «для 1 гостя»');
-    } else if (rooms === window.data.choiceRooms.hundredRooms && capacity !== window.data.choiceGuests.notGuests) {
-      window.data.selectPlace.setCustomValidity('«не для гостей»');
-    } else {
-      window.data.selectPlace.setCustomValidity('');
+    if (valid) {
+      window.tools.ajax({
+        method: 'POST',
+        url: 'https://js.dump.academy/keksobooking',
+        data: new FormData(form),
+        success: function () {
+          successMsg.classList.remove('hidden');
+          window.scrollTo(0, 0);
+          setTimeout(function () {
+            window.location.reload();
+          }, 2000);
+        }
+      });
     }
   };
-
-  /* Синхронизация времени заезда и времени выезда */
-  var setupTimeAccommodation = function () {
-    var selectTimeIn = window.data.activeForm.querySelector('[name="timein"]');
-    var selectTimeOut = window.data.activeForm.querySelector('[name="timeout"]');
-    if (selectTimeIn.value !== selectTimeOut.value) {
-      selectTimeIn.setCustomValidity('Время заезда  и время выезда должно совпадать');
-    } else {
-      selectTimeIn.setCustomValidity('');
-    }
-  };
-
-  var formButtonClickHandler = function () {
-    setupRoomsOfGuests(window.data.selectRooms.value, window.data.selectPlace.value);
-    setupTimeAccommodation();
-  };
-
-  /* Подтверждение правильности заполнения формы */
-  var confirmForm = function () {
-    var selectType = window.data.activeForm.querySelector('[name="type"]');
-    var submitFormButton = window.data.activeForm.querySelector('[type="submit"]');
-    selectType.addEventListener('focus', typeChangeHandler);
-    submitFormButton.addEventListener('click', formButtonClickHandler);
-  };
-
-  confirmForm();
+  form.addEventListener('submit', formSubmitHandler);
+  form.addEventListener('reset', function (evt) {
+    evt.preventDefault();
+    window.scrollTo(0, 0);
+    window.location.reload();
+  });
 })();
