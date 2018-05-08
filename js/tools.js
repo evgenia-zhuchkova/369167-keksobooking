@@ -110,7 +110,7 @@
     getAddress: function (options) {
       return (parseInt(options.left, 10) + parseInt(options.width / 2, 10)) + ', ' + (parseInt(options.top, 10) + parseInt(options.height, 10) + options.delta);
     },
-    
+  
     synchronizeFields: function (eventName, observableElement, callback) {
       callback();
       observableElement.addEventListener(eventName, function () {

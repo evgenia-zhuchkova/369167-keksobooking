@@ -42,7 +42,7 @@
     return result;
   };
 
-  var checkFeatures = function() {
+  var createSelectCriteria = function () {
     for (var key in selectCriteria) {
       if (selectCriteria.hasOwnProperty(key)) {
         if (typeof selectCriteria[key] === 'boolean') {
@@ -72,7 +72,7 @@
         var filteredValue = target.nodeName.toLowerCase() === 'input' ? target.checked : target.options[target.selectedIndex].value;
 
         selectCriteria[filteredField] = typeof filteredValue === 'boolean' || isNaN(filteredValue) ? filteredValue : parseInt(filteredValue, 10);
-        checkFeatures();
+        createSelectCriteria();
         if (selectCriteria.features.length > 0) {
           ads.forEach(function (item) {
             var checkFeatures = window.tools.checkEntry(item.offer.features, selectCriteria.features);

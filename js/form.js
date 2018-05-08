@@ -38,7 +38,7 @@
     element.addEventListener('focus', inputFocusHandler);
     element.addEventListener('blur', inputBlurHandler);
   };
-  var InitFormSubmitHandler = function(callback) {
+  var initFormSubmitHandler = function (callback) {
     return function (evt) {
       evt.preventDefault();
       var fields = Array.from(form.elements);
@@ -94,7 +94,7 @@
   };
 
   window.form = {
-    initSubmitHandler: InitFormSubmitHandler
+    initSubmitHandler: initFormSubmitHandler
   };
 
 })();
