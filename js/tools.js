@@ -7,6 +7,7 @@
   var MAIN_PIN_HEIGHT = 65;
   var MAIN_PIN_TIP = 22;
 
+
   var objectsMerge = function (source, target) {
     var result = {};
     for (var key in target) {
@@ -22,6 +23,7 @@
   };
 
   window.tools = {
+
     /* Случайное целое число в интервале от min до max, включая min и max */
     getRandomInteger: function (min, max) {
       var rand = min - 0.5 + Math.random() * (max - min + 1);
@@ -48,7 +50,7 @@
     },
 
     /* Ограничение по перемещению метки */
-    limitsPosition: function (container, position) {
+    checkPositionLimits: function (container, position) {
       return ((position.left < 0) || (position.top < TOP_LIMIT_Y) || (position.left + MAIN_PIN_WIDTH > container.width) || (position.top + MAIN_PIN_HEIGHT + MAIN_PIN_TIP > container.height));
     },
 
@@ -66,8 +68,8 @@
         url: '', // адрес запроса
         data: null, // передаваемые данные
         sinc: true, // синхронный или асинхронный запрос
-        success: null, // колбэк, выполняется в случае успешно выполненого запроса
-        sendError: null, // функция обработки ошибок
+        successHandler: null, // колбэк, выполняется в случае успешно выполненого запроса
+        errorHandler: null, // функция обработки ошибок
         type: '', // тип получаемых данных
         readyStateChange: null, // функция обработки ответа сервера
         headers: {} // заголовки для сервера
@@ -89,17 +91,17 @@
       }
       xhr.onreadystatechange = options.readyStateChange || function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-          options.success(xhr.response);
+          options.successHandler(xhr.response);
         }
         if (xhr.readyState === 4 && xhr.status !== 200) {
-          if (typeof options.sendError === 'function') {
-            options.sendError(xhr.response);
+          if (typeof options.errorHandler === 'function') {
+            options.errorHandler(xhr.response);
           }
         }
       };
       xhr.onerror = function () {
-        if (typeof options.sendError === 'function') {
-          options.sendError('Произошла ошибка соединения!');
+        if (typeof options.errorHandler === 'function') {
+          options.errorHandler('Произошла ошибка соединения!');
         }
       };
       xhr.send(options.data);
@@ -108,11 +110,11 @@
     getAddress: function (options) {
       return (parseInt(options.left, 10) + parseInt(options.width / 2, 10)) + ', ' + (parseInt(options.top, 10) + parseInt(options.height, 10) + options.delta);
     },
-
-    synchronizeFields: function (eventNAme, field1, field2, callback) {
-      callback(field1, field2);
-      field1.addEventListener(eventNAme, function () {
-        callback(field1, field2);
+    
+    synchronizeFields: function (eventName, observableElement, callback) {
+      callback();
+      observableElement.addEventListener(eventName, function () {
+        callback();
       });
     },
 

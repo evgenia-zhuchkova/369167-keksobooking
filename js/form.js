@@ -1,7 +1,7 @@
 'use strict';
 
 (function () {
-
+  var DISPLAYED_MESSAGE_TIME = 2000;
   var MIN_LENGTH = 30;
   var MAX_LENGTH = 100;
   var LIMIT_PRICE = {
@@ -29,71 +29,72 @@
     evt.target.removeEventListener('blur', inputBlurHandler);
   };
 
-  var showError = function (elem, message) {
-    elem.style.border = '1px solid #D8000C';
+  var showError = function (element, message) {
+    element.style.border = '1px solid #D8000C';
     var box = document.createElement('p');
     box.classList.add('error-message');
     box.textContent = message;
-    elem.parentElement.appendChild(box);
-    elem.addEventListener('focus', inputFocusHandler);
-    elem.addEventListener('blur', inputBlurHandler);
+    element.parentElement.appendChild(box);
+    element.addEventListener('focus', inputFocusHandler);
+    element.addEventListener('blur', inputBlurHandler);
   };
+  var InitFormSubmitHandler = function(callback) {
+    return function (evt) {
+      evt.preventDefault();
+      var fields = Array.from(form.elements);
 
-  var formSubmitHandler = function (evt) {
-    evt.preventDefault();
-    var fields = Array.from(form.elements);
-
-    fields.forEach(function (elem) {
-      if (elem.nodeName.toLowerCase() === 'input') {
-        switch (elem.type.toLowerCase()) {
-          case 'text':
-            if (elem.name === 'address') {
-              if (!elem.value.length) {
-                valid = false;
-                showError(elem, 'Поле не может быть пустым');
+      fields.forEach(function (item) {
+        if (item.nodeName.toLowerCase() === 'input') {
+          switch (item.type.toLowerCase()) {
+            case 'text':
+              if (item.name === 'address') {
+                if (!item.value.length) {
+                  valid = false;
+                  showError(item, 'Поле не может быть пустым');
+                }
               }
-            }
-            if (elem.name === 'title') {
-              if (elem.value.length < MIN_LENGTH) {
-                valid = false;
-                showError(elem, 'Поле не может содержать менее ' + MIN_LENGTH + ' символов');
+              if (item.name === 'title') {
+                if (item.value.length < MIN_LENGTH) {
+                  valid = false;
+                  showError(item, 'Поле не может содержать менее ' + MIN_LENGTH + ' символов');
+                }
+                if (item.value.length > MAX_LENGTH) {
+                  valid = false;
+                  showError(item, 'Поле не может содержать более ' + MAX_LENGTH + ' символов');
+                }
               }
-              if (elem.value.length > MAX_LENGTH) {
-                valid = false;
-                showError(elem, 'Поле не может содержать более ' + MAX_LENGTH + ' символов');
+              break;
+            case 'number':
+              if (item.name === 'price') {
+                if (item.value < LIMIT_PRICE[form.type.options[form.type.selectedIndex].value]) {
+                  valid = false;
+                  showError(item, 'Для типа жилья: ' + window.tools.TYPE_PARALLEL[[form.type.options[form.type.selectedIndex].value]] + ' минимальная цена - ' + LIMIT_PRICE[form.type.options[form.type.selectedIndex].value] + ' руб.');
+                }
               }
-            }
-            break;
-          case 'number':
-            if (elem.name === 'price') {
-              if (elem.value < LIMIT_PRICE[form.type.options[form.type.selectedIndex].value]) {
-                valid = false;
-                showError(elem, 'Для типа жилья: ' + window.tools.TYPE_PARALLEL[[form.type.options[form.type.selectedIndex].value]] + ' минимальная цена - ' + LIMIT_PRICE[form.type.options[form.type.selectedIndex].value] + ' руб.');
-              }
-            }
-            break;
-        }
-      }
-    });
-    if (valid) {
-      window.tools.ajax({
-        method: 'POST',
-        url: 'https://js.dump.academy/keksobooking',
-        data: new FormData(form),
-        success: function () {
-          successMsg.classList.remove('hidden');
-          window.scrollTo(0, 0);
-          setTimeout(function () {
-            window.location.reload();
-          }, 2000);
+              break;
+          }
         }
       });
-    }
+      if (valid) {
+        window.tools.ajax({
+          method: 'POST',
+          url: 'https://js.dump.academy/keksobooking',
+          data: new FormData(form),
+          successHandler: function () {
+            successMsg.classList.remove('hidden');
+            setTimeout(function () {
+              successMsg.classList.add('hidden');
+            }, DISPLAYED_MESSAGE_TIME);
+            window.scrollTo(0, 0);
+            callback();
+          }
+        });
+      }
+    };
   };
-  form.addEventListener('submit', formSubmitHandler);
-  form.addEventListener('reset', function (evt) {
-    evt.preventDefault();
-    window.scrollTo(0, 0);
-    window.location.reload();
-  });
+
+  window.form = {
+    initSubmitHandler: InitFormSubmitHandler
+  };
+
 })();

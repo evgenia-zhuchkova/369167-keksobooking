@@ -24,7 +24,37 @@
   var lastTimeout = null;
   var loadData = new Event('loadData', {bubbles: true, cancelable: true});
 
+  var startPinCoord = {
+    left: mainPin.style.left,
+    top: mainPin.style.top
+  };
+
+  var changeEvent = new Event('change');
+  var resetField = function (field, selectedIndex) {
+    field.selectedIndex = selectedIndex;
+    field.dispatchEvent(changeEvent);
+  };
+
   var deactivatePage = function () {
+    if(!map.classList.contains('map--faded')) {
+      map.classList.add('map--faded');
+    }
+    if(!adForm.classList.contains('ad-form--disabled')) {
+      adForm.classList.add('ad-form--disabled');
+    }
+    if(window.ad.getRenderedPins().length) {
+      window.ad.getRenderedPins().forEach(function (item) {
+        item.remove();
+      });
+      window.ad.closeAd();
+    }
+    adForm.title.value = '';
+    adForm.price.value = '';
+    resetField(adForm.type, 0);
+    resetField(adForm.rooms, 2);
+    resetField(adForm.timein, 0);
+    mainPin.style.left = startPinCoord.left;
+    mainPin.style.top = startPinCoord.top;
     adForm.address.value = window.tools.getAddress({
       element: mainPin,
       left: mainPin.style.left,
@@ -36,6 +66,7 @@
     formFields.forEach(function (item) {
       item.disabled = true;
     });
+    mainPin.addEventListener('mouseup', activePageHandler);
   };
 
   var activePageHandler = function () {
@@ -43,7 +74,9 @@
     map.classList.remove('map--faded');
     formFields.forEach(function (item) {
       item.disabled = false;
-      item.parentElement.style.position = 'relative';
+      if(item.parentElement.style.position !== 'relative') {
+        item.parentElement.style.position = 'relative';
+      }
     });
     adForm.address.value = window.tools.getAddress({
       element: mainPin,
@@ -51,14 +84,13 @@
       width: mainPin.offsetWidth,
       top: mainPin.style.top,
       height: mainPin.offsetHeight,
-      delta: 22
+      delta: parseInt(getComputedStyle(mainPin, ':after').borderTopWidth, 10)
     });
     window.ad.renderPins(window.data.get(), pinsContainer);
     mainPin.removeEventListener('mouseup', activePageHandler);
   };
 
   var loadDataHandler = function () {
-    mainPin.addEventListener('mouseup', activePageHandler);
     document.removeEventListener('loadData', loadDataHandler);
     window.map.activationPinMove(mainPin);
     window.filters.init(window.data.get(), filterForm, function (data) {
@@ -69,12 +101,18 @@
         window.ad.renderPins(data, pinsContainer);
       }, DEBOUNCE_INTERVAL);
     });
+    adForm.addEventListener('submit', window.form.initSubmitHandler(deactivatePage));
+    adForm.addEventListener('reset', function (evt) {
+    evt.preventDefault();
+      window.scrollTo(0, 0);
+      deactivatePage();
+    });
   };
 
   window.tools.ajax({
     url: 'https://js.dump.academy/keksobooking/data',
     type: 'json',
-    success: function (data) {
+    successHandler: function (data) {
       window.data.set(data);
       document.dispatchEvent(loadData);
     }
@@ -84,22 +122,21 @@
     adForm.address.readOnly = true;
     deactivatePage();
     document.addEventListener('loadData', loadDataHandler);
-    window.tools.synchronizeFields('change', adForm.type, adForm.price, function () {
+    window.tools.synchronizeFields('change', adForm.type, function () {
       adForm.price.placeholder = LIMIT_PRICE[adForm.type.value];
     });
-    window.tools.synchronizeFields('change', adForm.timein, adForm.timeout, function () {
+    window.tools.synchronizeFields('change', adForm.timein, function () {
       adForm.timeout.selectedIndex = adForm.timein.selectedIndex;
     });
-    window.tools.synchronizeFields('change', adForm.timeout, adForm.timein, function () {
+    window.tools.synchronizeFields('change', adForm.timeout, function () {
       adForm.timein.selectedIndex = adForm.timeout.selectedIndex;
     });
-    window.tools.synchronizeFields('change', adForm.rooms, adForm.capacity, function (param1, param2) {
-      var value = parseInt(param1.value, 10);
-      var options = param2.options;
+    window.tools.synchronizeFields('change', adForm.rooms, function () {
+      var value = parseInt(adForm.rooms.value, 10);
+      var options = adForm.capacity.options;
       var optionsLength = options.length;
       var availableOptions = ACTIVE_CHOICE[value];
       var curValue = null;
-
       for (var i = 0; i < optionsLength; i++) {
         curValue = parseInt(options[i].value, 10);
         if (availableOptions.indexOf(curValue) !== -1) {

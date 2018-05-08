@@ -5,7 +5,8 @@
   var PIN_HEIGHT = 70;
   var ESC_KEYCODE = 27;
   var MAX_VIEW_OFFERS = 5;
-
+  var PHOTO_WIDTH = 45;
+  var PHOTO_HEIGHT = 40;
 
   var templateTotal = document.querySelector('template');
   var pinTemplate = templateTotal.content.querySelector('.map__pin');
@@ -44,24 +45,25 @@
     data.offer.photos.forEach(function (item) {
       var popupPhoto = window.tools.createNewElement('img', 'popup__photo');
       popupPhoto.src = item;
-      popupPhoto.width = 45;
-      popupPhoto.height = 40;
+      popupPhoto.width = PHOTO_WIDTH;
+      popupPhoto.height = PHOTO_HEIGHT;
       newCard.querySelector('.popup__photos').appendChild(popupPhoto);
     });
     return newCard;
   };
-  var closePopUpHandler = function () {
+  var closePopUp = function () {
     if (currentOffer) {
       currentOffer.remove();
       currentPin.blur();
     }
   };
-  document.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
+  var closePopUpHandler = function (evt) {
+    if (evt.target.closest('.popup__close') || evt.keyCode === ESC_KEYCODE) {
       evt.preventDefault();
-      closePopUpHandler();
+      closePopUp();
+      document.removeEventListener('keydown', closePopUpHandler);
     }
-  });
+  };
   window.ad = {
     renderPins: function (data, target) {
       createdTags.forEach(function (item) {
@@ -87,9 +89,14 @@
           currentOffer = createCard(item);
           currentOffer.querySelector('.popup__close').addEventListener('click', closePopUpHandler);
           target.insertAdjacentElement('afterend', currentOffer);
+          document.addEventListener('keydown', closePopUpHandler);
         });
       });
       target.appendChild(fragment);
-    }
+    },
+    getRenderedPins: function () {
+      return createdTags;
+    },
+    closeAd: closePopUp
   };
 })();

@@ -18,12 +18,7 @@
     features: []
   };
   var filtrate = function (field, item) {
-    var result = true;
-
-    if (selectCriteria[field] !== 'any') {
-      result = selectCriteria[field] === item.offer[field];
-    }
-    return result;
+    return selectCriteria[field] === 'any' ? true : selectCriteria[field] === item.offer[field];
   };
 
   var filtratePrice = function (item) {
@@ -47,8 +42,27 @@
     return result;
   };
 
+  var checkFeatures = function() {
+    for (var key in selectCriteria) {
+      if (selectCriteria.hasOwnProperty(key)) {
+        if (typeof selectCriteria[key] === 'boolean') {
+          if (selectCriteria[key]) {
+            if (!selectCriteria.features.includes(key)) {
+              selectCriteria.features.push(key);
+            }
+          } else {
+            if (selectCriteria.features.includes(key)) {
+              var index = selectCriteria.features.indexOf(key);
+              selectCriteria.features.splice(index, 1);
+            }
+          }
+        }
+      }
+    }
+  };
+
   window.filters = {
-    init: function (data, elem, callback) {
+    init: function (ads, elem, callback) {
       elem.addEventListener('change', function (event) {
         event.preventDefault();
 
@@ -58,32 +72,17 @@
         var filteredValue = target.nodeName.toLowerCase() === 'input' ? target.checked : target.options[target.selectedIndex].value;
 
         selectCriteria[filteredField] = typeof filteredValue === 'boolean' || isNaN(filteredValue) ? filteredValue : parseInt(filteredValue, 10);
-        for (var key in selectCriteria) {
-          if (selectCriteria.hasOwnProperty(key)) {
-            if (typeof selectCriteria[key] === 'boolean') {
-              if (selectCriteria[key]) {
-                if (!selectCriteria.features.includes(key)) {
-                  selectCriteria.features.push(key);
-                }
-              } else {
-                if (selectCriteria.features.includes(key)) {
-                  var index = selectCriteria.features.indexOf(key);
-                  selectCriteria.features.splice(index, 1);
-                }
-              }
-            }
-          }
-        }
-        data.forEach(function (item) {
-          if (selectCriteria.features.length > 0) {
+        checkFeatures();
+        if (selectCriteria.features.length > 0) {
+          ads.forEach(function (item) {
             var checkFeatures = window.tools.checkEntry(item.offer.features, selectCriteria.features);
             if (checkFeatures) {
               newData.push(item);
             }
-          } else {
-            newData = data.slice();
-          }
-        });
+          });
+        } else {
+          newData = ads.slice();
+        }
 
         newData = newData.filter(function (item) {
           return filtrate('type', item) && filtrate('guests', item) && filtrate('rooms', item) && filtratePrice(item);
