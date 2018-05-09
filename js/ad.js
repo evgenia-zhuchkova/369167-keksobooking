@@ -55,6 +55,7 @@
     if (currentOffer) {
       currentOffer.remove();
       currentPin.blur();
+      document.removeEventListener('keydown', closePopUpHandler);
     }
   };
   var closePopUpHandler = function (evt) {

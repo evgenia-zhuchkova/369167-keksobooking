@@ -66,7 +66,7 @@
       elem.addEventListener('change', function (event) {
         event.preventDefault();
 
-        var newData = [];
+        var filteredAds = [];
         var target = event.target;
         var filteredField = target.nodeName.toLowerCase() === 'input' ? target.value : target.id.slice(target.id.indexOf('-') + 1);
         var filteredValue = target.nodeName.toLowerCase() === 'input' ? target.checked : target.options[target.selectedIndex].value;
@@ -77,17 +77,17 @@
           ads.forEach(function (item) {
             var checkFeatures = window.tools.checkEntry(item.offer.features, selectCriteria.features);
             if (checkFeatures) {
-              newData.push(item);
+              filteredAds.push(item);
             }
           });
         } else {
-          newData = ads.slice();
+          filteredAds = ads.slice();
         }
 
-        newData = newData.filter(function (item) {
+        filteredAds = filteredAds.filter(function (item) {
           return filtrate('type', item) && filtrate('guests', item) && filtrate('rooms', item) && filtratePrice(item);
         });
-        callback(newData);
+        callback(filteredAds);
       });
     }
   };
